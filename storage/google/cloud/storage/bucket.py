@@ -1089,7 +1089,9 @@ class Bucket(_PropertyMixin):
         :raises ValueError: if the bucket's retention policy is locked.
         """
         policy = self._properties.setdefault('retentionPolicy', {})
-        policy['retentionPeriod'] = str(value)
+        if value is not None:
+            value = str(value)
+        policy['retentionPeriod'] = value
         self._patch_property('retentionPolicy', policy)
 
     @property
@@ -1537,7 +1539,7 @@ class Bucket(_PropertyMixin):
 
         client = self._require_client(client)
 
-        query_params = {'metageneration': self.metageneration}
+        query_params = {'ifMetagenerationMatch': self.metageneration}
 
         if self.user_project is not None:
             query_params['userProject'] = self.user_project
